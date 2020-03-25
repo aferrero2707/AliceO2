@@ -40,6 +40,9 @@ using namespace std;
 
 int main(int argc, char** argv){
     
+    // Declaration of arrays. The size of the arrays is hardcoded (it wouldn't accept an initialisation using a variable)
+    // The size of the arrays should be the number of events you wish to simulate
+    
     double xarray[200]{0};
     double yarray[200]{0};
     double chg[200]{0};
@@ -52,18 +55,47 @@ int main(int argc, char** argv){
     TApplication app ("app",&argc,argv);
     cout << "\n\n==========\nRunning the Validation procedure of (pre)clustering" << endl;
     
+    //We generate the position of the hits and the charge of the clusters.
+    //Depending on what you want to do you may need to fix some of these variables.
+    
+    /*
+     USE CASES
+     
+     To check the dependency of residuals with respect to y (to see if there is a bias in the residuals):
+     I would fix x to 0, get y uniformly between 0 and 0.5, get the charge uniformly between 20 and 2000.
+     
+     To see the residuals distribution on the detector 819:
+     I would make x and y uniform on the detector 819 (so x from -20 to 20 and y from -40 to 40) and the charge uniformly between 20 and 2000.
+     
+     To see the evolution of residuals distribution width with respect to cluster charge:
+     I would make x and y uniform on the detector 819 (so x from -20 to 20 and y from -40 to 40) and fix the charge to any given value I wish to look at.
+     Then I would run the code, make a gaussian fit of the residuals distrubtion obtained, and hardcode the result in the dedicated function at the end of Validation.cxx
+     */
+    
     TRandom *ygen = new TRandom(12345);
     TRandom *xgen = new TRandom(123456);
     TRandom *chggen = new TRandom(123);
 
-    for(int i=0; i<200; i++){
-//        yarray[i] = ygen->Uniform(0,0.5);
-//        xarray[i] = 0;
-        yarray[i] = ygen->Uniform(-20,20);
-        xarray[i] = xgen->Uniform(-40,40);
-     //   chg[i] = chggen->Uniform(20,2000);
-        chg[i] = 1000;
-    }
+    // Dependency of residuals with respect to y
+//        for(int i=0; i<200; i++){
+//            xarray[i] = 0;
+//            yarray[i] = ygen->Uniform(0,0.5);
+//            chg[i] = chggen->Uniform(20,2000);
+//        }
+    
+    // Residuals distribution on the detector 819
+//        for(int i=0; i<200; i++){
+//            yarray[i] = ygen->Uniform(-20,20);
+//            xarray[i] = xgen->Uniform(-40,40);
+//            chg[i] = chggen->Uniform(20,2000);
+//        }
+    
+   //  Residuals distribution width with respect to fixed cluster charge
+        for(int i=0; i<200; i++){
+            yarray[i] = ygen->Uniform(-20,20);
+            xarray[i] = xgen->Uniform(-40,40);
+            chg[i] = 5000;
+        }
 
     cout << "\n\n==========\nGetting info for Bending plane\n\n" << endl;
    validation.InfoDE819b();
@@ -82,11 +114,15 @@ int main(int argc, char** argv){
 
     cout << "\n\n==========\nValidation procedure terminated\n\n" << endl;
 
-
+    // If want to plot the residual dependency wrt y and/or the residuals distribution for this run of events
    ResidualsPlot(yarray, resyfound, eyfound, 200);
 
-   // ResidualsCompare();
+    
+    //Useless
+//  ResidualsCompare();
 
+
+    // If want to plot the evolution of width with respect to cluster charge (values hardcoded in Validation.cxx)
  //   PlotWidthWrtCharge();
     
    app.Run(kTRUE);
