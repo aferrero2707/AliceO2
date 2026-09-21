@@ -896,8 +896,10 @@ o2::mch::TrackParam MatchGlobalFwd::FwdtoMCH(const o2::dataformats::GlobalFwdTra
 /// \return value of angle within [-pi, pi].
 static double constrainAngle(double angle)
 {
-  while (angle >= o2::constants::math::PI) angle -= o2::constants::math::TwoPI;
-  while (angle < -o2::constants::math::PI) angle += o2::constants::math::TwoPI;
+  while (angle >= o2::constants::math::PI)
+    angle -= o2::constants::math::TwoPI;
+  while (angle < -o2::constants::math::PI)
+    angle += o2::constants::math::TwoPI;
   return angle;
 }
 
